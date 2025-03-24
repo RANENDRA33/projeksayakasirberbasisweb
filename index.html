@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Kasir</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8f9fa; margin: 0; padding: 0; }
+        .container { width: 60%; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2); margin-top: 20px; }
+        h2, h3, h4 { text-align: center; color: #343a40; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff; }
+        th, td { border: 1px solid #dee2e6; padding: 12px; text-align: center; }
+        th { background: #007bff; color: white; }
+        .button { margin-top: 10px; padding: 10px 15px; cursor: pointer; background: #28a745; color: white; border: none; border-radius: 5px; display: block; width: 100%; text-align: center; font-size: 16px; }
+        .button:hover { background: #218838; }
+        .input-group { margin-top: 10px; display: flex; justify-content: space-between; }
+        .input-group label { flex: 1; padding: 5px; }
+        .input-group input { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>💰 Aplikasi Kasir 💳</h2>
+        <div class="input-group">
+            <label>Nama Barang: <input type="text" id="namaBarang"></label>
+            <label>Harga: <input type="number" id="hargaBarang"></label>
+            <label>Diskon (%): <input type="number" id="diskonBarang" value="0"></label>
+        </div>
+        <button class="button" onclick="tambahBarang()">➕ Tambah Barang</button>
+        
+        <h3>🛒 Daftar Belanja</h3>
+        <table id="tabelBelanja">
+            <tr>
+                <th>Nama Barang</th>
+                <th>Harga</th>
+                <th>Diskon</th>
+                <th>Total</th>
+            </tr>
+        </table>
+        <h4>🧾 Total Belanja: <span id="totalBelanja">0</span></h4>
+        <button class="button" onclick="simpanTransaksi()">💾 Simpan Transaksi</button>
+        
+        <h3>📜 Riwayat Transaksi</h3>
+        <table id="tabelRiwayat">
+            <tr>
+                <th>Tanggal</th>
+                <th>Nama Barang</th>
+                <th>Harga</th>
+                <th>Diskon</th>
+                <th>Total</th>
+            </tr>
+        </table>
+        <h4>📊 Total Riwayat Belanja: <span id="totalRiwayat">0</span></h4>
+    </div>
+
+    <script>
+        function tambahBarang() {
+            let nama = document.getElementById('namaBarang').value;
+            let harga = parseFloat(document.getElementById('hargaBarang').value);
+            let diskon = parseFloat(document.getElementById('diskonBarang').value);
+            let total = harga - (harga * diskon / 100);
+            
+            if (nama && harga) {
+                let table = document.getElementById('tabelBelanja');
+                let row = table.insertRow(-1);
+                row.insertCell(0).innerText = nama;
+                row.insertCell(1).innerText = harga;
+                row.insertCell(2).innerText = diskon + '%';
+                row.insertCell(3).innerText = total;
+                updateTotalBelanja();
+                document.getElementById('namaBarang').value = '';
+                document.getElementById('hargaBarang').value = '';
+                document.getElementById('diskonBarang').value = '0';
+            }
+        }
+
+        function updateTotalBelanja() {
+            let table = document.getElementById('tabelBelanja');
+            let total = 0;
+            for (let i = 1; i < table.rows.length; i++) {
+                total += parseFloat(table.rows[i].cells[3].innerText);
+            }
+            document.getElementById('totalBelanja').innerText = total;
+        }
+
+        function updateTotalRiwayat() {
+            let table = document.getElementById('tabelRiwayat');
+            let total = 0;
+            for (let i = 1; i < table.rows.length; i++) {
+                total += parseFloat(table.rows[i].cells[4].innerText);
+            }
+            document.getElementById('totalRiwayat').innerText = total;
+        }
+
+        function simpanTransaksi() {
+            let tableBelanja = document.getElementById('tabelBelanja');
+            let tableRiwayat = document.getElementById('tabelRiwayat');
+            let tanggal = new Date().toLocaleString();
+            
+            for (let i = 1; i < tableBelanja.rows.length; i++) {
+                let row = tableRiwayat.insertRow(-1);
+                row.insertCell(0).innerText = tanggal;
+                row.insertCell(1).innerText = tableBelanja.rows[i].cells[0].innerText;
+                row.insertCell(2).innerText = tableBelanja.rows[i].cells[1].innerText;
+                row.insertCell(3).innerText = tableBelanja.rows[i].cells[2].innerText;
+                row.insertCell(4).innerText = tableBelanja.rows[i].cells[3].innerText;
+            }
+            
+            while (tableBelanja.rows.length > 1) {
+                tableBelanja.deleteRow(1);
+            }
+            updateTotalBelanja();
+            updateTotalRiwayat();
+        }
+    </script>
+</body>
+</html>
